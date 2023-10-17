@@ -56,5 +56,9 @@ const compras = [
 
 // Tem que usar: filter, map e o reduce
 // 1 - todos os elementos que tenha eletronico como verdadeiro
+const elementos_verdadeiro = item => item.eletronico != false
+const result_elementos = compras.filter(elementos_verdadeiro)
+console.log(result_elementos)
+
 // 2 - retornar o total de cada produto: quantidade * preco
 // 3 - média do valor total
