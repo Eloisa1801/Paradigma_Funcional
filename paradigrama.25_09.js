@@ -23,3 +23,38 @@ console.log(compras.map(nomes));
 const mult = (multi) => multi.qtde*multi.preco
 console.log(compras.map(mult))
 
+const qtdeMaiorQueTres = item => item.qtde > 3
+const itensResul = compras.filtrer(qtdeMaiorQueTres)
+console.log(itensResul)
+
+const nomeResul = compras
+    .filter(qtdeMaiorQueTres)
+    .map(getNome)
+console.log(nomeResul)
+
+// REDUCE - acumulador (1,9) função + valor inicial (retorna apenas um número)
+
+[2,3,4,4]
+nmeArray.reduce(fn, i)
+
+// EX:
+const getTotal = item => item.qtde * item.preco
+const somar = (acc, el) => acc + el
+const totalGeral = compras
+    .map(getTotal)
+    .reduce(somar)
+console.log(totalGeral)
+
+// exercicio
+const compras = [
+    {nome: 'Mouse', qtde: 5, preco: 10, eletronico: true},
+    {nome: 'Teclado', qtde: 0, preco: 25, eletronico: true},
+    {nome: 'Monitor', qtde: 4, preco: 500, eletronico: true},
+    {nome: 'Mesa', qtde: 8, preco: 200, eletronico: false},
+    {nome: 'Cadeira', qtde: 8, preco: 80, eletronico: false},
+]
+
+// Tem que usar: filter, map e o reduce
+// 1 - todos os elementos que tenha eletronico como verdadeiro
+// 2 - retornar o total de cada produto: quantidade * preco
+// 3 - média do valor total
