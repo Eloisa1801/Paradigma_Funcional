@@ -62,3 +62,10 @@ console.log(result_elementos)
 
 // 2 - retornar o total de cada produto: quantidade * preco
 // 3 - média do valor total
+
+const elementos_verdadeiro = item => item.eletronico === true
+const total_prod = item => item.qtde*item.preco
+const result_elementos = compras.filter(elementos_verdadeiro).map(total_prod)
+console.log(result_elementos)
+const result_media = compras.reduce(result_elementos)/compras.filter(elementos_verdadeiro.length)
+
