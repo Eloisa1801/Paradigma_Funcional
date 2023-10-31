@@ -69,3 +69,16 @@ const result_elementos = compras.filter(elementos_verdadeiro).map(total_prod)
 console.log(result_elementos)
 const result_media = compras.reduce(result_elementos)/compras.filter(elementos_verdadeiro.length)
 
+// Promise - promessa que algo vai contecer (try(tentar fazer) e catch(mensagem erro)) 
+// then - então
+// reject e resolve
+// try e catch
+// if e else
+
+let p = new Promise(function(resolve){
+    resolve(10)
+})
+p.then(function(valor){
+    console.log(valor)
+})
+// callback- função que chama outra função 
