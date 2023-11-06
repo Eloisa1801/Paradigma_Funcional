@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: white;
             margin: 0;
             padding: 20px;
         }
@@ -16,22 +16,25 @@
             text-align: center;
         }
 
+        h6{
+            color: red;
+        }
+
         label {
             display: block;
             margin-bottom: 5px;
         }
 
-        input[type="text"],
-        input[type="number"] {
-            width: 100%;
+        input{
+            width: 98%;
             padding: 10px;
             margin-bottom: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #cccccc;
             border-radius: 4px;
         }
 
         button {
-            background-color: #4CAF50;
+            background-color: rgb(103, 107, 103);
             color: white;
             padding: 10px 15px;
             border: none;
@@ -40,7 +43,7 @@
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #b1b7b2;
         }
 
         table {
@@ -49,7 +52,7 @@
         }
 
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #dddddd;
             padding: 8px;
             text-align: left;
         }
@@ -63,19 +66,19 @@
         }
 
         #filtro {
-            width: 100%;
+            width: 98%;
             padding: 10px;
             margin-bottom: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid #cccccc;
             border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <h1>Registro de Alunos</h1>
+    <h1>Alunos</h1>
 
     <!-- Campo de filtro -->
-    <label for="filtro">Filtrar Alunos por Nome:</label>
+    <label for="filtro">Filtrar:</label>
     <input type="text" id="filtro" onkeyup="filtrarAlunos()" placeholder="Digite o nome do aluno">
 
     <!-- Tabela para exibir os alunos -->
@@ -87,72 +90,94 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Os alunos serão adicionados aqui dinamicamente -->
+            <!-- adicionar alunos -->
         </tbody>
     </table>
+    <br>
+    <!-- retornar o reduce da media -->
+    <span id="media-notas"></span>
 
-    <!-- Formulário para adicionar novo aluno -->
+    <h2>Novo Alunos</h2>
+    <h6>*O nome não pode ser em branco</h6>
+    <h6>*A nota não pode ser em branco</h6>
+    <!-- Forms para adicionar novo aluno -->
     <form id="aluno-form">
-        <label for="nome">Nome do Aluno:</label>
+        <label for="nome">Nome:</label>
         <input type="text" id="nome" required>
         <br>
-        <label for="nota">Nota (entre 0 e 10):</label>
+        <label for="nota">Nota:</label>
         <input type="number" id="nota" min="0" max="10" step="0.1" required>
         <br>
         <button type="button" onclick="adicionarAluno()">Adicionar</button>
     </form>
-
+    
     <script>
+       const alunos = [];
+
         function adicionarAluno() {
-            // Obtenha os valores dos campos de entrada
-            var nome = document.getElementById("nome").value;
-            var nota = document.getElementById("nota").value;
+            const nome = document.getElementById("nome").value; //obtendo os valores dos input
+            const nota = parseFloat(document.getElementById("nota").value);
 
-            // Verifique se os campos estão em branco
-            if (nome === "" || nota === "") {
-                alert("Por favor, preencha todos os campos.");
+            if (!nome || isNaN(nota) || nota < 0 || nota > 10) { //validando campos nome e nota
+                alert("Por favor, preencha os campos corretamente.");
                 return;
             }
-
-            // Valide a nota para garantir que esteja entre 0 e 10
-            if (nota < 0 || nota > 10) {
-                alert("A nota deve estar entre 0 e 10.");
-                return;
-            }
-
-            // Crie uma nova linha na tabela com os dados do aluno
-            var table = document.getElementById("aluno-table").getElementsByTagName('tbody')[0];
-            var newRow = table.insertRow(table.rows.length);
-            var cell1 = newRow.insertCell(0);
-            var cell2 = newRow.insertCell(1);
-            cell1.innerHTML = nome;
-            cell2.innerHTML = nota;
-
-            // Limpe os campos de entrada após adicionar o aluno
-            document.getElementById("nome").value = "";
-            document.getElementById("nota").value = "";
+            alunos.push({ nome, nota }); //adicionando ao array alunos
+            renderAlunos();
+            const mediaDasNotas = calcularMediaNotas();
+            document.getElementById("media-notas").textContent = "Média das notas: " + mediaDasNotas; //exibindo media
         }
 
+        // --------------Utilizado função filter aqui------------------
+        // Utilizado função pura, recebe o array alunos e retorna um novo array sem modificar o original
         function filtrarAlunos() {
-            var input, filter, table, tbody, tr, td, i, txtValue;
-            input = document.getElementById("filtro");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("aluno-table");
-            tbody = table.getElementsByTagName("tbody")[0];
-            tr = tbody.getElementsByTagName("tr");
-
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[0];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
+            const filtro = document.getElementById("filtro").value.trim().toUpperCase();//pegando valor do campo id 'filtro', sem espaço no inicio e fim e ignorando letras maiusculas e minusculas
+            const alunosFiltrados = alunos.filter(aluno => {
+                if (filtro === "") {
+                    return true; // Se o filtro estiver vazio, incluir todos os alunos
+                } else {
+                    return aluno.nome.trim().toUpperCase() === filtro; //retorna aluno correspondente ao filtro
                 }
-            }
+            });
+            renderAlunos(alunosFiltrados);
         }
+        // ----------------------------------------------------------
+
+        // --------------Utilizado função map aqui-------------------
+        //utilizado MAP para retornar o array alunos
+        // Utilizado função pura, recebe o array alunos e retorna uma apresentação HTML 
+        function renderAlunos(alunosParaRenderizar = alunos) {
+            const tableBody = document.querySelector("#aluno-table tbody");
+            tableBody.innerHTML = "";
+
+            const elementosHTMLAlunos = alunosParaRenderizar.map(aluno => {
+                const newRow = document.createElement("tr"); //novo elemento
+                const cell1 = document.createElement("td");
+                const cell2 = document.createElement("td");
+                cell1.textContent = aluno.nome;
+                cell2.textContent = aluno.nota;
+                newRow.appendChild(cell1); //anexando a celula a uma linha da tabela
+                newRow.appendChild(cell2);
+                return newRow;
+            });
+
+            elementosHTMLAlunos.forEach(elemento => {
+                tableBody.appendChild(elemento);// anexa a linha a tabela
+            });
+        }
+        // ----------------------------------------------------------
+
+        // ------------Utilizado função reduce aqui------------------
+        // como não encontrei oportunidade para utilizar a função reduce, coloquei a media das notas inseridas na tabela
+        // Utilizado função pura, recebe o array alunos e retorna um novo array sem modificar o original
+        function calcularMediaNotas(alunosParaCalcular = alunos) {
+            const somaNotas = alunosParaCalcular.reduce((soma, aluno) => {
+                return soma + aluno.nota;
+            }, 0);
+            const media = somaNotas / alunosParaCalcular.length;
+            return media;
+        }
+        // ----------------------------------------------------------
     </script>
 </body>
 </html>
